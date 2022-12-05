@@ -8,7 +8,7 @@ def count_words(subreddit, word_list=[], after=''):
 
 	hot = "https://www.reddit.com/r/{}/hot.json?after={}".format(subreddit,
                                                                  after)
-	stuff = hot_req.json()
+	stuff = hot.json()
 	if stuff.get("data") and stuff['data'].get('children'):
 		children = stuff.get("data").get("children")
 		for child in children:
