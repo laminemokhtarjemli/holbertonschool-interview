@@ -2,7 +2,7 @@ import requests
 import sys
 
 movie_id = sys.argv[1]
-response = requests.get(f"https://swapi.dev/api/films/{movie_id}")
+response = requests.get("https://swapi-api.hbtn.io/api/films/{movie_id}")
 
 characters = response.json()['characters']
 
