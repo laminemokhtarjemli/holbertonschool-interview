@@ -1,43 +1,71 @@
+#!/usr/bin/python3
+
 import sys
 
-def solve(n, queens, xy_diffs, xy_sums):
-    """
-    Solves the N queens problem.
+def is_valid(board, row, col):
+    # Check this row on left side
+    if 1 in board[row]:
+        return False
+    # Check upper diagonal
+    i = row
+    j = col
+    while i >= 0 and j >= 0:
+        if board[i][j] == 1:
+            return False
+        i -= 1
+        j -= 1
 
-    Parameters:
-    - n: the size of the chessboard
-    - queens: a list of placed queens, represented as (x, y) tuples
-    - xy_diffs: a set of x-y differences of placed queens to avoid attacks along diagonals
-    - xy_sums: a set of x+y sums of placed queens to avoid attacks along diagonals
-    """
-    if n == len(queens):
-        print(queens)
-        return
-    for y in range(n):
-        x = len(queens)
-        if (x-y) not in xy_diffs and (x+y) not in xy_sums:
-            solve(n, queens + [(x, y)], xy_diffs + {x-y}, xy_sums + {x+y})
+    # Check lower diagonal
+    i = row
+    j = col
+    while i < len(board) and j >= 0:
+        if board[i][j] == 1:
+            return False
+        i += 1
+        j -= 1
 
-def main():
-    # Check number of arguments
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
+    return True
 
-    # Get N
-    try:
-        n = int(sys.argv[1])
-    except ValueError:
-        print("N must be a number")
-        sys.exit(1)
 
-    # Check if N is at least 4
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
+def nqueens_helper(board, col):
+    if col >= len(board):
+        print_board(board, len(board))
+    for i in range(len(board)):
+        if is_valid(board, i, col):
+            board[i][col] = 1
+            result = nqueens_helper(board, col + 1)
+            if result:
+                return True
+            board[i][col] = 0
+    return False
 
-    # Solve the N queens problem
-    solve(n, [], set(), set())
+
+def print_board(board, n):
+    b = []
+    for i in range(n):
+        for j in range(n):
+            if board[i][j] == 1:
+                b.append([i, j])
+    print(b)
+
+
+def nqueens(n):
+    board = []
+    for i in range(n):
+        row = [0] * n
+        board.append(row)
+    nqueens_helper(board, 0)
+
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        exit(1)
+    queens = sys.argv[1]
+    if not queens.isnumeric():
+        print("N must be a number")
+        exit(1)
+    elif int(queens) < 4:
+        print("N must be at least 4")
+        exit(1)
+    nqueens(int(queens))
