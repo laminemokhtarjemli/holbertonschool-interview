@@ -8,7 +8,7 @@ def count_words(subreddit, word_list, after=None, count={}):
     params = {'limit': 100}
     if after:
         params['after'] = after
-    response = requests.get(f'https://www.reddit.com/r/{subreddit}/hot.json', headers=headers, params=params)
+    response = requests.get('https://www.reddit.com/r/{subreddit}/hot.json', headers=headers, params=params)
 
     # Check if the subreddit is valid
     if response.status_code == 404:
