@@ -1,34 +1,41 @@
 import requests
-import re
-import sys
 
-def count_words(subreddit, word_list, after=None, count={}):
-    # Make the request to the Reddit API
-    headers = {'User-Agent': 'MyBot/0.0.1'}
-    params = {'limit': 100}
-    if after:
-        params['after'] = after
-    response = requests.get('https://www.reddit.com/r/{subreddit}/hot.json', headers=headers, params=params)
+USER_AGENT = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            AppleWebKit/537.36 (KHTML, like Gecko)\
+                 Chrome/87.0.4280.88 Safari/537.36'}
 
-    # Check if the subreddit is valid
-    if response.status_code == 404:
-        return
-
-    # Parse the titles of the hot articles
-    data = response.json()
-    titles = [article['data']['title'] for article in data['data']['children']]
+def fetch_subreddit_stories(subreddit, after='null'):
+    """Retrieve a list of the top stories on a subreddit.
     
-    # Count the occurrences of the words in the word list in the titles
-    for title in titles:
-        for word in word_list:
-            word_lower = word.lower()
-            count[word_lower] = count.get(word_lower, 0) + len(re.findall(r'\b' + word_lower + r'\b', title.lower()))
+    subreddit: string, name of the subreddit to fetch stories from
+    after: string, used to paginate through the stories
+    """
+    url = f"https://www.reddit.com/r/{subreddit}.json?sort=hot&after={after}&limit=100"
+    response = requests.get(url, headers=USER_AGENT, allow_redirects=False)
+    if response.status_code == 200:
+        data = response.json()['data']
+        stories = data['children']
+        next_page = data.get('after')
+        return stories, next_page
+    return [], None
+
+def count_words_in_stories(subreddit, words_to_count):
+    """Count the occurrences of each word in the top stories of a subreddit.
     
-    # Recursively call the function with the next page of articles
-    after = data['data']['after']
-    if after:
-        count_words(subreddit, word_list, after, count)
-    else:
-        # Print the results in the required format
-        for word, cnt in sorted(count.items(), key=lambda x: (-x[1], x[0])):
-            print(f'{word}: {cnt}')
+    subreddit: string, name of the subreddit to fetch stories from
+    words_to_count: list of strings, words to count in the stories
+    """
+    word_counts = {word: 0 for word in words_to_count}
+    stories, next_page = fetch_subreddit_stories(subreddit)
+    while stories:
+        for story in stories:
+            title = story['data']['title'].lower()
+            for word in word_counts:
+                word_counts[word] += title.split().count(word.lower())
+        stories, next_page = fetch_subreddit_stories(subreddit, after=next_page)
+    
+    sorted_counts = sorted(word_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    for word, count in sorted_counts:
+        if count > 0:
+            print(f"{word}: {count}")
