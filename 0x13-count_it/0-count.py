@@ -6,7 +6,7 @@ def fetch_subreddit_stories(subreddit, after='null'):
     subreddit: string, name of the subreddit to fetch stories from
     after: string, used to paginate through the stories
     """
-    url = f"https://www.reddit.com/r/{subreddit}.json?sort=hot&after={after}&limit=100"
+    url = "https://www.reddit.com/r/{subreddit}.json?sort=hot&after={after}&limit=100"
     response = requests.get(url, headers={'User-Agent': 'product'}, allow_redirects=False)
     if response.status_code == 200:
         data = response.json()['data']
@@ -36,4 +36,5 @@ def count_words(subreddit, words_to_count):
     sorted_counts = sorted(word_counts.items(), key=lambda kv: (-kv[1], kv[0]))
     for word, count in sorted_counts:
         if count > 0:
+            print("{word}: {count}")
            
