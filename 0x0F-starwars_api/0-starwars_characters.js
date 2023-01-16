@@ -1,4 +1,4 @@
-const request = require('request-promise-native');
+const request = require('request');
 const MovieID = process.argv[1];
 const url = `https://swapi-api.hbtn.io/api/films/${MovieID}`;
 
