@@ -1,19 +1,20 @@
 import sys
 
-def n_queens(n):
-    if n < 4:
-        print("N must be at least 4")
+def is_valid(board, row, col, n):
+    for i in range(row):
+        if board[i] == col or abs(board[i] - col) == abs(i - row):
+            return False
+    return True
+
+def n_queens(board, row, n):
+    if row == n:
+        print(board)
         return
-    solutions = []
-    def backtrack(board, cols, diag1, diag2, row):
-        if row == n:
-            solutions.append(board)
-            return
-        for col in range(n):
-            if col not in cols and row - col not in diag1 and row + col not in diag2:
-                backtrack(board + [(row, col)], cols + [col], diag1 + [row - col], diag2 + [row + col], row + 1)
-    backtrack([], [], [], [], 0)
-    return solutions
+    for col in range(n):
+        if is_valid(board, row, col, n):
+            board[row] = col
+            n_queens(board, row + 1, n)
+            board[row] = -1 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -27,4 +28,8 @@ if __name__ == "__main__":
     if not isinstance(n, int):
         print("N must be a number")
         exit(1)
-    result = n_queens(n
+    elif n < 4:
+        print("N must be at least 4")
+        exit(1)
+    board = [-1 for i in range(n)]
+    n_queens(board, 0, n)
