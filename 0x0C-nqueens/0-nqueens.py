@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import sys
 
 def n_queens(n):
@@ -22,10 +21,10 @@ if __name__ == "__main__":
         exit(1)
     try:
         n = int(sys.argv[1])
-    except:
+    except ValueError:
         print("N must be a number")
         exit(1)
     if not isinstance(n, int):
         print("N must be a number")
         exit(1)
-    print(n_queens(n))
+    result = n_queens(n
