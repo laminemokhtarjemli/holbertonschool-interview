@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import requests
 
 def fetch_subreddit_stories(subreddit, after='null'):
