@@ -6,8 +6,7 @@
 #define MAX1 2500
 #define MAX2 2500
 
-#include <stdlib.h>
-#include <stdio.h>
+
 
 int _putchar(char c);
 void multiply(char *num_1, char *num_2);
