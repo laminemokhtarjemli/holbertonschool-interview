@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 
 def is_valid(board, row, col, n):
