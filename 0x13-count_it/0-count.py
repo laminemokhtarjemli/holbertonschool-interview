@@ -11,8 +11,8 @@ def count_words(subreddit, word_list):
     word_list: the list of words to search for
     """
     results = {}
-    headers = {'User-agent': 'HolbertonSchoolTask'}
-    link = f'https://api.reddit.com/r/{subreddit}/hot.json'
+    headers = {'User-agent': 'HolbertonSchool'}
+    link = 'https://api.reddit.com/r/subreddit/hot.json'
     word_list = [word.lower() for word in word_list]
     
     while True:
