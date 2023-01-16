@@ -1,26 +1,46 @@
 #!/usr/bin/node
 const request = require('request');
 
-async function getCharacterNames(urls, index = 0) {
-  try {
-    if (index >= urls.length) return;
-    const characterData = await request({uri: urls[index], json: true});
-    console.log(characterData.name);
-    await getCharacterNames(urls, index + 1);
-  } catch (err) {
-    console.error(err);
-  }
+function getCharacterNames(urls, index = 0) {
+  request(urls[index], (err, res, body) => {
+    if (!err) {
+      const character = JSON.parse(body);
+      console.log(character.name);
+      if (index + 1 < urls.length) getCharacterNames(urls, index + 1);
+    }
+  });
 }
 
-(async () => {
-  try {
-    const movieData = await request({uri: `https://swapi-api.hbtn.io/api/films/${process.argv[2]}`, json: true});
-    if(movieData.detail) {
-      console.log(`Error: ${movieData.detail}`);
+request(`https://swapi-api.hbtn.io/api/films/${process.argv[2]}`, (err, res, body) => {
+  if (!err) {
+    const movie = JSON.parse(body);
+    if(movie.detail) {
+      console.log(`Error: ${movie.detail}`);
       return;
     }
-    await getCharacterNames(movieData.characters);
-  } catch (err) {
-    console.error(err);
+    getCharacterNames(movie.characters);
   }
-})();
+});
+#!/usr/bin/node
+const request = require('request');
+
+function getCharacterNames(urls, index = 0) {
+  request(urls[index], (err, res, body) => {
+    if (!err) {
+      const character = JSON.parse(body);
+      console.log(character.name);
+      if (index + 1 < urls.length) getCharacterNames(urls, index + 1);
+    }
+  });
+}
+
+request(`https://swapi-api.hbtn.io/api/films/${process.argv[2]}`, (err, res, body) => {
+  if (!err) {
+    const movie = JSON.parse(body);
+    if(movie.detail) {
+      console.log(`Error: ${movie.detail}`);
+      return;
+    }
+    getCharacterNames(movie.characters);
+  }
+});
