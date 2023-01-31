@@ -1,43 +1,38 @@
 #!/usr/bin/python3
+""" Reddit hot article """
 import requests
-import sys
 
-def count_words(subreddit, word_list):
-    """
-    Counts the number of occurrences of words in the titles of hot articles
-    from the specified subreddit and prints them in a sorted order.
-    
-    subreddit: the subreddit to search in
-    word_list: the list of words to search for
-    """
-    results = {}
-    headers = {'User-agent': 'HolbertonSchool'}
-    link = 'https://api.reddit.com/r/subreddit/hot.json'
-    word_list = [word.lower() for word in word_list]
-    
-    while True:
-        response = requests.get(link, headers=headers)
-        
-        if response.status_code != 200:
-            return
-        
-        data = response.json()
-        children = data['data']['children']
-        
-        for child in children:
-            title = child['data']['title'].lower()
-            for word in word_list:
-                if word in title:
-                    if word in results:
-                        results[word] += 1
-                    else:
-                        results[word] = 1
-        
-        if data['data']['after']:
-            link = f'https://api.reddit.com/r/{subreddit}/hot.json?after={data["data"]["after"]}'
-        else:
-            break
+def count_words(subreddit, word_list, after='', words_counting={}):
+""" count word function """
 
-    sorted_results = sorted(results.items(), key=lambda x: (-x[1], x[0]))
-    for result in sorted_results:
-        print(result[0], result[1])
+url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+headers = {'User-Agent': 'custom'}
+payload = {'limit': '100', 'after': after}
+response = requests.get(url, headers=headers,
+                        params=payload, allow_redirects=False)
+
+if not response.status_code == 200:
+    return
+data = response.json().get('data')
+after = data.get('after')
+children_list = data.get('children')
+
+for child in children_list:
+    title = child.get('data').get('title')
+    for word in word_list:
+        ocurrences = title.lower().split().count(word.lower())
+        if ocurrences > 0:
+            if word in words_counting:
+                words_counting[word] += ocurrences
+            else:
+                words_counting[word] = ocurrences
+
+if after is not None:
+    return count_words(subreddit, word_list, after, words_counting)
+else:
+    if not len(words_counting) > 0:
+        return
+    iterator = sorted(words_counting.items(),
+                      key=lambda kv: (-kv[1], kv[0]))
+    for key, value in iterator:
+        print('{}: {}'.format(key.lower(), value))
