@@ -1,39 +1,50 @@
 #!/usr/bin/python3
-""" Reddit hot article """
 import requests
 
-def count_words(subreddit, word_list, after='', words_counting={}):
-""" count word """
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    headers = {'User-Agent': 'custom'}
-    payload = {'limit': '100', 'after': after}
-    response = requests.get(url, headers=headers,
-                            params=payload, allow_redirects=False)
+def generate_word_count_dicts(words):
+    """
+    Creates dictionaries to store the word count and the number of duplicates of each word in the list.
+    """
+    word_count = {word: 0 for word in words}
+    duplicate_count = {}
+    for word in words:
+        if word not in duplicate_count:
+            duplicate_count[word] = 0
+        duplicate_count[word] += 1
+    return word_count, duplicate_count
 
-    if response.status_code != 200:
-        return None
 
-    data = response.json().get('data')
-    after = data.get('after')
-    children_list = data.get('children')
+def count_words(subreddit, words, after="", word_count={}, duplicate_count={}, is_recursive=False):
+    """
+    Queries the Reddit API to get the word count in a subreddit.
+    """
+    if not is_recursive:
+        word_count, duplicate_count = generate_word_count_dicts(words)
 
-    for child in children_list:
-        title = child.get('data').get('title')
-        for word in word_list:
-            ocurrences = title.lower().split().count(word.lower())
-            if ocurrences > 0:
-                if word in words_counting:
-                    words_counting[word] += ocurrences
-                else:
-                    words_counting[word] = ocurrences
+    url = "https://api.reddit.com/r/{}/hot?after={}".format(subreddit, after)
+    headers = {"User-Agent": "Python3"}
+    response = requests.get(url, headers=headers).json()
 
-    if after:
-        return count_words(subreddit, word_list, after, words_counting)
-    else:
-        if words_counting:
-            iterator = sorted(words_counting.items(),
-                              key=lambda kv: (-kv[1], kv[0]))
-            for key, value in iterator:
-                print('{}: {}'.format(key.lower(), value))
+    try:
+        data = response.get('data')
+        articles = data.get('children')
+        new_after = data.get('after')
+
+        for article in articles:
+            article_data = article.get('data')['title']
+            for word in word_count:
+                count = article_data.lower().split(' ').count(word.lower())
+                word_count[word] += count
+
+        if new_after:
+            count_words(subreddit, words, new_after, word_count, duplicate_count, True)
         else:
-            return None
+            sorted_words = sorted(word_count.items(), key=lambda x: x[::-1])
+            sorted_desc = sorted(sorted_words, key=lambda x: x[1], reverse=True)
+
+            for word, count in sorted_desc:
+                count *= duplicate_count[word]
+                if count:
+                    print(f'{word.lower()}: {count}')
+    except Exception:
+        return None
