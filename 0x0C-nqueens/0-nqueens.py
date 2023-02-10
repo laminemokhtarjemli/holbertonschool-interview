@@ -1,74 +1,89 @@
 #!/usr/bin/python3
-""" Nqueens """
+"""
+The N-Queens problem is the problem of placing N chess queens on an N×N chessboard so that no two queens threaten each other
+"""
 import sys
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: chess_queens N")
+if len(sys.argv) != 2:
+    print("Usage: nqueens N")
     exit(1)
 try:
-        N = eval(sys.argv[1])
+    N = eval(sys.argv[1])
 except Exception:
-        print("N must be a number")
-exit(1)
-chess_board = [[0]*N for _ in range(N)]
-remaining_queens = [N]
-final_solutions = []
-def check_attack(row, col):
+    print("N must be a number")
+    exit(1)
+if (N < 4):
+    print('N must be at least 4')
+    exit(1)
+Grid = [[0]*N for _ in range(N)]
+Nq = [N]
+solution = []
+
+
+def attack(i, j):
     """
     Check if a queen placed at (row, col) is under attack from any other queens
     """
     for k in range(N):
-        if chess_board[row][k] == 1 or chess_board[k][col] == 1:
+        if Grid[i][k] == 1 or Grid[k][j] == 1:
             return True
     for k in range(N):
         for z in range(N):
-            if (k + z == row + col) or (k - z == row - col):
-                if chess_board[k][z] == 1:
+            if (k + z == i + j) or (k - z == i - j):
+                if Grid[k][z] == 1:
                     return True
     return False
-def find_queens(number_of_queens, current_row):
+
+
+def Nqueens(n, x):
     """
     Place queens on the chessboard by backtracking
     """
-    for i in range(current_row, N):
+    for i in range(x, N):
         for j in range(N):
-            if not check_attack(i, j) and chess_board[i][j] != 1:
-                chess_board[i][j] = 1
-                remaining_queens[0] = remaining_queens[0] - 1
-                find_queens(number_of_queens - 1, i + 1)
-                if remaining_queens[0] == 0:
-                    determine_position()
-                chess_board[i][j] = 0
-                remaining_queens[0] = remaining_queens[0] + 1
+            if (not(attack(i, j))) and (Grid[i][j] != 1):
+                Grid[i][j] = 1
+                Nq[0] = Nq[0] - 1
+                Nqueens(n - 1, i + 1)
+                if Nq[0] == 0:
+                    position()
+                Grid[i][j] = 0
+                Nq[0] = Nq[0] + 1
     return False
-def clear_board(N):
+
+
+def reset(N):
     """
     Reset the chessboard to all zeros
     """
     for k in range(N):
         for z in range(N):
-            chess_board[k][z] = 0
-def validate_board(N):
+            Grid[k][z] = 0
+
+
+def validate(N):
     """
     Validate the solution by checking if the number of queens placed is equal to N
     """
-    count = 0
-    placed_queens = []
-    for k, row in enumerate(chess_board):
-        if 1 in row:
-            placed_queens.append([k, row.index(1)])
-            count += 1
-    if count == N:
-        return placed_queens
+    suma = 0
+    store = []
+    for k, i in enumerate(Grid):
+        if 1 in i:
+            store.append([k, i.index(1)])
+            suma += 1
+    if suma == N:
+        return store
     else:
         return []
-def determine_position():
+
+
+def position():
     """
     Store a valid solution if it doesn't already exist in the list of solutions
     """
-    positions = validate_board(N)
-    if len(positions) == N and positions not in final_solutions:
-        print(positions)
-        final_solutions.append(positions)
+    x = validate(N)
+    if len(x) == N and x not in solution:
+        print(x)
+        solution.append(x)
 
-find_queens(N, 0)
+
+Nqueens(N, 0)
