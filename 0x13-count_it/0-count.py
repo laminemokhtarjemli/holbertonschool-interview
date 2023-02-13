@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import requests
-
+"""query the Reddit API and perform word counting """
 
 def count_words(subreddit, keywords, start=None, keyword_count={}):
     """
