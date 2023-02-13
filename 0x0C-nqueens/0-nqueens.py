@@ -7,12 +7,15 @@ import sys
 
 def n_queens(x, z, board):
         """
-        The N-Queens problem is the task of placing N chess
-        queens on an NxN chessboard so that no two queens 
-        threaten each other.
+        Function: task of placing N chess queens
+                  on an NxN chessboard so that no
+                  two queens threaten each other.
 
         Parameters: The x argument represents the size of the chessboard
-        and the number of queens to be placed
+                    and the number of queens to be placed
+        
+        Return: All possible solutions to
+            placement, in list of lists form
         """
         for i in range(x):
             hold = 0
