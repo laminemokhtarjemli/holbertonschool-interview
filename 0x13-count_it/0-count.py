@@ -16,15 +16,15 @@ def count_words(subreddit, keywords, start=None, keyword_count={}):
             point for the API request.
         word_count: Dictionary to store the count of each keyword.
     """
-
-    keywords = [word.lower() for word in keywords]
     if not keywords:
         return None
-
+    
+    keywords = [word.lower() for word in keywords]
+  
     if not start:
-        api_url = f'https://www.reddit.com/r/{subreddit}/hot.json'
+        api_url = 'https://www.reddit.com/r/{subreddit}/hot.json'
     else:
-        api_url = f'https://www.reddit.com/r/{subreddit}/hot.json?after={start}'
+        api_url = 'https://www.reddit.com/r/{subreddit}/hot.json?after={start}'
 
     api_response = requests.get(
         api_url,
