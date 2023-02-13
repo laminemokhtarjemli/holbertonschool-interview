@@ -18,39 +18,35 @@ def count_words(subreddit, keywords, start=None, keyword_count={}):
     """
     if not keywords:
         return None
-    
-    keywords = [word.lower() for word in keywords]
-  
-    if not start:
-        api_url = 'https://www.reddit.com/r/{subreddit}/hot.json'
     else:
-        api_url = 'https://www.reddit.com/r/{subreddit}/hot.json?after={start}'
-
-    api_response = requests.get(
-        api_url,
-        headers={'user-agent': 'user'},
-        allow_redirects=False
-    )
+        lower_list = (map(lambda word: word.lower(), keywords))
+        keywords = list(lower_list)
+    if start is None:
+        hot = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+    else:
+        hot = 'https://www.reddit.com/r/{}/hot.json?after={}'.format(
+            subreddit, start)
+    hot_request = requests.get(hot,
+                               headers={"user-agent": "user"},
+                               allow_redirects=False)
     try:
-        data = api_response.json()['data']
+        data = hot_request.json().get("data")
     except BaseException:
         return
-
-    for keyword in keywords:
-        if keyword not in keyword_count:
-            keyword_count[keyword] = 0
-
-    articles = data['children']
-    for article in articles:
-        title = article['data']['title'].lower().split(' ')
-        for keyword in keywords:
-            keyword_count[keyword] += title.count(keyword)
-
-    next_start = data.get('after')
-    if next_start:
-        return count_words(subreddit, keywords, next_start, keyword_count)
+    for word in keywords:
+        if word not in keyword_count.keys():
+            keyword_count[word] = 0
+    children = data.get("children")
+    for child in children:
+        title = (child.get("data").get("title").lower())
+        title = title.split(' ')
+        for word in keywords:
+            keyword_count[word] += title.count(word)
+    after = data.get("after")
+    if after is not None:
+        return count_words(subreddit,keywords, after, keyword_count)
     else:
-        sorted_keywords = sorted(keyword_count.items(), key=lambda x: (-x[1], x[0]))
-        for keyword, count in sorted_keywords:
-            if count != 0:
-                print(f'{keyword}: {count}')
+        sorted_subs = sorted(keyword_count.items(), key=lambda x: (-x[1], x[0]))
+        for i in sorted_subs:
+            if i[1] != 0:
+                print(i[0] + ": " + str(i[1]))
