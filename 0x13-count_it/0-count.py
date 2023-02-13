@@ -48,3 +48,4 @@ def count_words(subreddit, words, after="", word_count={}, duplicate_count={}, i
                     print(f'{word.lower()}: {count}')
     except Exception:
         return None
+    
