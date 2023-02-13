@@ -16,7 +16,7 @@ def count_words(subreddit, keywords, start=None, keyword_count={}):
             point for the API request.
         word_count: Dictionary to store the count of each keyword.
     """
-    if not keywords:
+    if keyword_count == []:
         return None
     else:
         lower_list = (map(lambda word: word.lower(), keywords))
