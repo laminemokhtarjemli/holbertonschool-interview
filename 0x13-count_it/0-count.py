@@ -42,9 +42,9 @@ def count_words(subreddit, keywords, start=None, keyword_count={}):
         title = title.split(' ')
         for word in keywords:
             keyword_count[word] += title.count(word)
-    after = data.get("after")
-    if after is not None:
-        return count_words(subreddit,keywords, after, keyword_count)
+    start = data.get("after")
+    if start is not None:
+        return count_words(subreddit,keywords, start, keyword_count)
     else:
         sorted_subs = sorted(keyword_count.items(), key=lambda x: (-x[1], x[0]))
         for i in sorted_subs:
