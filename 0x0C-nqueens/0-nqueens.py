@@ -1,12 +1,13 @@
 #!/usr/bin/python3
-"""script that uses backtracking to solve the N-Queens problem. 
-    The N-Queens problem is the task of placing N chess queens on an
-    NxN chessboard"""
+"""
+The N queens puzzle is the challenge of placing N non-attacking queens
+on an N×N chessboard. Write a program that solves the N queens problem.
+"""
 from sys import argv
 
 
 def validate() -> None:
- 
+    """Check beforehand if the number can be evaluated"""
     if (len(argv) != 2):
         print('Usage: nqueens N') or exit(1)
     try:
@@ -17,7 +18,8 @@ def validate() -> None:
         print('N must be at least 4') or exit(1)
     nqueens(0, num)
 
-       def nqueens(j: int, num: int) -> None:
+
+def nqueens(j: int, num: int) -> None:
     """N Queens Algorithm"""
     table = [num * [0] for i in range(num)]
     col = []
@@ -25,8 +27,11 @@ def validate() -> None:
     diag_left = []
     dd = []
     create_table(j, num, 0, table, diag_right, diag_left, col, dd)
-    ef create_table(j: int, num: int, bol: int, table: int, diag_right: list,
+
+
+def create_table(j: int, num: int, bol: int, table: int, diag_right: list,
                  diag_left: list, col: list, dd: list) -> None:
+    """Create a test of chess tables with queens in different positions"""
     if bol == 0:
         i = 0
     else:
@@ -72,6 +77,7 @@ def validate() -> None:
 
 def check(num: int, i: int, j: int,
           right: list, left: list, col: list) -> bool:
+    """Validate if the Queen is not attcked"""
     # Diagonal right
     if (i - j) in right:
         return (False)
@@ -86,4 +92,3 @@ def check(num: int, i: int, j: int,
 
 if __name__ == '__main__':
     validate()
-    
