@@ -105,7 +105,3 @@ if __name__ == "__main__":
         exit(1)
     matrix = board_set_up(N)
     solve(matrix, 0)
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Term
