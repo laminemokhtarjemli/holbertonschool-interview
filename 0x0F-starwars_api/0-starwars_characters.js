@@ -1,23 +1,28 @@
 #!/usr/bin/node
-
+// characters of a Star Wars films
 const request = require('request');
-
-const filmNum = process.argv[2] + '/';
-const filmURL = 'https://swapi-api.hbtn.io/api/films/';
-
-request(filmURL + filmNum, async function (err, res, body) {
-  if (err) return console.error(err);
-
-  const charURLList = JSON.parse(body).characters;
-
-  for (const charURL of charURLList) {
-    await new Promise(function (resolve, reject) {
-      request(charURL, function (err, res, body) {
-        if (err) return console.error(err);
-
-        console.log(JSON.parse(body).name);
-        resolve();
+const myArgs = process.argv.splice(2);
+const URL = 'https://swapi-api.alx-tools.com/api/films/' + myArgs[0];
+request.get(URL, async (err, response, body) => {
+  if (err) {
+    console.log(err);
+  } else {
+    const character = JSON.parse(body).characters;
+    const characterList = characterURLs => {
+      const promise = new Promise((resolve, reject) => {
+        request.get(characterURLs, (err, response, body) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(body);
+          }
+        });
       });
-    });
+      return promise;
+    };
+    for (let i = 0; i < character.length; i++) {
+      const result = await characterList(character[i]);
+      console.log(JSON.parse(result).name);
+    }
   }
 });
