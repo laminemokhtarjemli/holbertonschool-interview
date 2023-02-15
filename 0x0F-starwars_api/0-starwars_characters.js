@@ -1,5 +1,5 @@
 #!/usr/bin/node
-// characters of a Star Wars films
+// characters of a Star Wars film
 const request = require('request');
 
 const movieId = process.argv[2];
@@ -10,10 +10,11 @@ request(url, async function (error, response, body) {
     console.log(error);
   } else {
     const characters = JSON.parse(body).characters;
+    const names = [];
 
-    for (const characterUrl of characters) {
+    for (let i = 0; i < characters.length; i++) {
       const res = await new Promise((resolve, reject) => {
-        request(characterUrl, (error, res, html) => {
+        request(characters[i], (error, res, html) => {
           if (error) {
             reject(error);
           } else {
@@ -21,7 +22,11 @@ request(url, async function (error, response, body) {
           }
         });
       });
-      console.log(res);
+      names[i] = res;
+    }
+
+    for (let i = 0; i < characters.length; i++) {
+      console.log(names[i]);
     }
   }
 });
