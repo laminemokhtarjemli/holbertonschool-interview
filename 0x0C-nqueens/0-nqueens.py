@@ -50,5 +50,5 @@ def main():
 
     nqueens(n, 0, [])
 
-if _name_ == '_main_':
-    main()
+if __name__ == '__main__':
+    main()
