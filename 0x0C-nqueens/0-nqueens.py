@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-"""Solving N Queens Problem"""
+"""Solving N Queens with Backtracing"""
 import sys
 
 
 def nqueens(n, y, board):
     """
-    Method: nqueens - place queens
-            on an nXn board so that
+    Method: nqueens - place n queens
+            on an n by n board so that
             no queens are attacking any
             others.
     Parameters: n is an int that sets
                 board size and # of queens
-    Return: possible solutions to
+    Return: All possible solutions to
             placement, in list of lists form
     """
     for x in range(n):
