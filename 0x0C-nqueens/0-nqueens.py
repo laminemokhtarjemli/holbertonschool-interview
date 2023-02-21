@@ -1,59 +1,37 @@
 #!/usr/bin/python3
-"""N Queens"""
+"""N queens puzzle."""
 import sys
 
 
-def print_board(board, n):
-    """Print allocated positions to the queen"""
-    b = []
-
-    for i in range(n):
-        for j in range(n):
-            if j == board[i]:
-                b.append([i, j])
-    print(b)
+def cposition(b, row, col):
+    """Check position."""
+    for c in range(col):
+        if b[c] is row or abs(b[c] - row) is abs(c - col):
+            return False
+    return True
 
 
-def is_position_safe(board, i, j, r):
-    """Checks if the position is safe for the queen"""
-    return board[i] in (j, j - i + r, i - r + j)
+def check(b, col):
+    """Backtrack."""
+    n = len(b)
+    if col is n:
+        print(str([[c, b[c]] for c in range(n)]))
+        return
+    for row in range(n):
+        if cposition(b, row, col):
+            b[col] = row
+            check(b, col + 1)
 
 
-def safe_positions(board, row, n):
-    """Find all safe positions where the queen can be allocated"""
-    if row == n:
-        print_board(board, n)
-
-    else:
-        for j in range(n):
-            allowed = True
-            for i in range(row):
-                if is_position_safe(board, i, j, row):
-                    allowed = False
-            if allowed:
-                board[row] = j
-                safe_positions(board, row + 1, n)
-
-
-def create_board(size):
-    """Generates the board"""
-    return [0 * size for i in range(size)]
-
-
-if len(sys.argv) != 2:
-    print("Usage: nqueens N")
-    exit(1)
-
-try:
-    n = int(sys.argv[1])
-except BaseException:
-    print("N must be a number")
-    exit(1)
-
-if (n < 4):
-    print("N must be at least 4")
-    exit(1)
-
-board = create_board(int(n))
-row = 0
-safe_positions(board, row, int(n))
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+    if sys.argv[1].isdigit() is False:
+        print("N must be a number")
+        sys.exit(1)
+    if int(sys.argv[1]) < 4:
+        print("N must be at least 4")
+        sys.exit(1)
+    b = [0 for col in range(int(sys.argv[1]))]
+    check(b, 0)
